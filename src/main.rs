@@ -63,7 +63,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let base_data_lua = fs::read_to_string(base_data_lua_path).unwrap();
     lua.load(&base_data_lua).set_name("base_data")?.exec()?;
 
-    lua.load(r#"print(serpent.block(data.raw["recipe"]))"#).exec()?;
+    lua.load(r#"print(serpent.block(data.raw["recipe"], { comment = false }))"#).exec()?;
 
     Ok(())
 }

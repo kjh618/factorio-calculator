@@ -32,5 +32,6 @@ dofile("factorio-data/core/data.lua")
 
 package.path = "factorio-data/base/?.lua;" .. package_path
 dofile("factorio-data/base/data.lua")
+dofile("factorio-data/base/data-updates.lua")
 
 --print(serpent.block(data.raw["recipe"], { comment = false }))

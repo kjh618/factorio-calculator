@@ -14,9 +14,11 @@ pub struct Recipe {
     pub ingredients: Vec<Stuff>,
     pub energy: f64, // seconds
     pub products: Vec<Stuff>,
+    pub allow_decomposition: bool,
 }
 
 // TODO: Use FromLua trait?
+// TODO: Change to use table.contains_key more?
 
 impl Stuff {
     pub fn from_table(table: Table) -> mlua::Result<Self> {
@@ -51,6 +53,13 @@ impl Stuff {
             Self::Fluid { name, amount: _ } => name,
         }
     }
+
+    pub fn amount(&self) -> f64 {
+        match self {
+            Self::Item { name: _, amount } => *amount,
+            Self::Fluid { name: _, amount } => *amount,
+        }
+    }
 }
 
 impl Recipe {
@@ -76,7 +85,12 @@ impl Recipe {
         };
 
         let products = if let Ok(name) = table.get("result") {
-            vec![Stuff::Item { name, amount: 1.0 }]
+            let amount = if let Ok(amount) = table.get("result_count") {
+                amount
+            } else {
+                1.0
+            };
+            vec![Stuff::Item { name, amount }]
         } else if let Ok(products) = table.get::<_, Table>("results") {
             products
                 .sequence_values()
@@ -90,11 +104,18 @@ impl Recipe {
             });
         };
 
+        let allow_decomposition = if table.contains_key("allow_decomposition")? {
+            table.get("allow_decomposition")?
+        } else {
+            true
+        };
+
         Ok(Self {
             name,
             ingredients,
             energy,
             products,
+            allow_decomposition,
         })
     }
 }

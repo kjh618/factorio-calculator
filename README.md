@@ -1,5 +1,5 @@
 # Factorio Calculator
-A Factorio recipe ratio calculator written in Rust
+A CLI Factorio ratio calculator
 
 ## Commands
 * `search STRING`: List products that contain `STRING` in their name.
